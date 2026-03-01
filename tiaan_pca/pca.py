@@ -75,7 +75,7 @@ class PCA:
         self.principle_components = U[:, :self.n_components]
         singular_values = S[:self.n_components]
         # compute total varaince based on all singular values
-        total_variance = self._expl_var(S, D.shape[1])
+        total_variance = np.sum(self._expl_var(S, D.shape[1]))
         self.explained_variance = self._expl_var(singular_values, D.shape[1])
         self._set_expl_var_ratios(total_variance)
         
@@ -384,6 +384,11 @@ class PCA:
         --------
         None, just sets the class variable 'explained_variance_ratio'
         """
+        if np.ndim(total_variance) != 0:
+            raise ValueError("total_variance must be a scalar.")
+        if total_variance <= 0:
+            raise ValueError("total_variance must be strictly positive.")
+
         self.explained_variance_ratio = np.empty(len(self.explained_variance))
         
         for i, lambda_ in enumerate(self.explained_variance):
